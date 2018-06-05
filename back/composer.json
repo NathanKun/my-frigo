@@ -9,7 +9,12 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
-        "sahusoftcom/eloquent-image-mutator": "dev-master"
+        "sahusoftcom/eloquent-image-mutator": "dev-master",
+        "infyomlabs/laravel-generator": "5.6.x-dev",
+        "laravelcollective/html": "^5.6.0",
+        "infyomlabs/adminlte-templates": "5.6.x-dev",
+        "infyomlabs/swagger-generator": "dev-master",
+        "jlapp/swaggervel": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
@@ -34,8 +39,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-            ]
+            "dont-discover": []
         }
     },
     "scripts": {
