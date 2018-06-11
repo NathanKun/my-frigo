@@ -7,6 +7,7 @@ import com.catprogrammer.myfrigo.model.Food
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
+import java.time.DateTimeException
 import java.time.LocalDate
 import java.util.*
 
@@ -22,16 +23,19 @@ class OcrUtil {
         return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
     }
 
-    fun detect(food: Food, cb: (f: Food) -> Unit) {
+    fun detect(food: Food, detectCallback: (f: Food) -> Unit) {
 
         val image1 = FirebaseVisionImage.fromBitmap(food.photoBitmap!!)
-        //val image2 = FirebaseVisionImage.fromBitmap(food.photoBitmap!!.rotate(90f))
-        //val image3 = FirebaseVisionImage.fromBitmap(food.photoBitmap!!.rotate(-90f))
+        val image2 = FirebaseVisionImage.fromBitmap(food.photoBitmap!!.rotate(90f))
+        val image3 = FirebaseVisionImage.fromBitmap(food.photoBitmap!!.rotate(-90f))
 
         val onSuccessListener = { firebaseVisionText: FirebaseVisionText ->
             // Task completed successfully
             //Log.d("ocr detect", "detect ended")
             //Log.d("ocr detect", "blocks: ${firebaseVisionText.blocks.size}")
+
+            var isBarcodeFound = false
+            var isDateFound = false
 
             for (block in firebaseVisionText.blocks) {
                 //val blockText: String = block.text
@@ -43,8 +47,8 @@ class OcrUtil {
                         Log.d("ocr detect", "barcode found: $barcode")
 
                         food.barcode = barcode
+                        isBarcodeFound = true
                     }
-
 
                     try {
                         val localDate = findDate(lineText)
@@ -52,36 +56,50 @@ class OcrUtil {
                         if (localDate != null) {
                             Log.d("ocr detect", "date found: $localDate")
 
-                            food.expirationDate = localDate
+                            if (localDate.isAfter(LocalDate.now())) {
+                                food.expirationDate = localDate
+                            } else {
+                                food.productionDate = localDate
+                            }
+                            isDateFound = true
                         }
                     } catch (e: NumberFormatException) {
                         //e.printStackTrace()
+                        Log.d("ocr detect", "NumberFormatException, lineText = $lineText")
+                    } catch (e: DateTimeException) {
+                        //e.printStackTrace()
+                        Log.d("ocr detect", "DateTimeException, lineText = $lineText")
                     }
-
                 }
             }
 
-            food.isOcrDetected = true
-            cb(food)
+            if (!isBarcodeFound) {
+                Log.d("ocr detect", "no ocr barcode found")
+            }
+            if (!isDateFound) {
+                Log.d("ocr detect", "no ocr date found")
+            }
+            setOcrDetected(food)
+            detectCallback(food)
         }
 
-        val onFailureListener = { e: Exception ->
+        val onFailureListener = { _: Exception ->
             // Task failed with an exception
             Log.d("ocr detect", "OCR detect error")
-            e.printStackTrace()
-            food.isOcrDetected = true
-            cb(food)
+            //_.printStackTrace()
+            setOcrDetected(food)
+            detectCallback(food)
         }
 
         detector.detectInImage(image1)
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener)
-        /*detector.detectInImage(image2)
+        detector.detectInImage(image2)
                 .addOnSuccessListener(onSuccessListener)
                 .addOnFailureListener(onFailureListener)
         detector.detectInImage(image3)
                 .addOnSuccessListener(onSuccessListener)
-                .addOnFailureListener(onFailureListener)*/
+                .addOnFailureListener(onFailureListener)
     }
 
     private fun findBarcode(str: String): String? {
@@ -164,5 +182,18 @@ class OcrUtil {
 
     private fun containsDivider(str: String): Boolean {
         return str.contains('/') || str.contains('-') || str.contains('.')
+    }
+
+    private fun setOcrDetected(food: Food) {
+        if (!food.isOcr1Detected) {
+            Log.d("ocr detect", "detect 1 ended")
+            food.isOcr1Detected = true
+        } else if (!food.isOcr2Detected) {
+            Log.d("ocr detect", "detect 2 ended")
+            food.isOcr2Detected = true
+        } else {
+            Log.d("ocr detect", "detect 3 ended")
+            food.isOcr3Detected = true
+        }
     }
 }

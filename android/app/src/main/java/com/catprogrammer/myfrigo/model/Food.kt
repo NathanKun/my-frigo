@@ -1,9 +1,9 @@
 package com.catprogrammer.myfrigo.model
 
 import android.graphics.Bitmap
-import android.util.Log
 import com.catprogrammer.myfrigo.`interface`.Crudable
 import com.catprogrammer.myfrigo.util.DateTimeUtil
+import com.catprogrammer.myfrigo.util.HttpUtil
 import okhttp3.Callback
 import org.json.JSONObject
 import java.time.LocalDate
@@ -11,26 +11,32 @@ import java.time.LocalDateTime
 
 class Food() : Crudable {
 
-    var id: Int? = null
-    var count: Int? = null
-    var countType: CountType? = null
+    var id: Int = 0
+    var count: Int = 100
+    var countType: CountType = CountType.COUNT_TYPE_PERCENTAGE
     var productionDate: LocalDate? = null
     var expirationDate: LocalDate? = null
-    var isHistory: Boolean? = null
+    var isHistory: Boolean = false
     var createdAt: LocalDateTime? = null
     var updatedAt: LocalDateTime? = null
 
-    var name: String? = null
-    var note: String? = null
+    var name: String = ""
+    var note: String = ""
     var barcode: String? = null
     var historyId: Int? = null
     var photoBitmap: Bitmap? = null
+    var photoBitmapPath: String? = null
+    var photoBitmapCompressed: Bitmap? = null
     var photoUrlSmall: String? = null
     var photoUrlLarge: String? = null
     var photoUrlOriginal: String? = null
 
     var isBarcodeDetected: Boolean = false
-    var isOcrDetected: Boolean = false
+    var isOcr1Detected: Boolean = false
+    var isOcr2Detected: Boolean = false
+    var isOcr3Detected: Boolean = false
+
+    private val httpUtil = HttpUtil.getInstance()
 
     companion object Populator {
 
@@ -62,28 +68,25 @@ class Food() : Crudable {
         }
     }
 
-    constructor(bitmap: Bitmap) : this() {
+    constructor(bitmap: Bitmap, compressedBitmap: Bitmap, path: String) : this() {
         this.photoBitmap = bitmap
+        this.photoBitmapCompressed = compressedBitmap
+        this.photoBitmapPath = path
     }
 
     override fun create(cb: Callback) {
-        Log.d("detect", "create called")
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        httpUtil.create(this, cb)
     }
 
     override fun push(cb: Callback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        httpUtil.push(this, cb)
     }
 
     override fun pull(cb: Callback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        httpUtil.pull(this, cb)
     }
 
     override fun delete(cb: Callback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    enum class CountType {
-        COUNT_TYPE_NUMBER, COUNT_TYPE_PERCENTAGE
+        httpUtil.delete(this, cb)
     }
 }
