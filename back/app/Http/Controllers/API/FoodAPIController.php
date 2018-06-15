@@ -28,7 +28,7 @@ class FoodAPIController extends AppBaseController
     }
 
     /**
-     * Display a listing of the Food.
+     * Display a listing of the Food which count > 0
      * GET|HEAD /foods
      *
      * @param Request $request
@@ -38,7 +38,10 @@ class FoodAPIController extends AppBaseController
     {
         $this->foodRepository->pushCriteria(new RequestCriteria($request));
         $this->foodRepository->pushCriteria(new LimitOffsetCriteria($request));
-        $foods = $this->foodRepository->all()->where('is_history', false);
+        $foods = $this->foodRepository
+          ->all()
+          ->where('is_history', false)
+          ->where('count', '>', '0');
 
         return $this->sendResponse($foods->toArray(), 'Foods retrieved successfully');
     }
