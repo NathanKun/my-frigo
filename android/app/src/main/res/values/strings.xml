@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">MyFrigo</string>
     <string name="img_desc_capture">capture</string>
+    <string name="placeholder_yyyy_mm_dd">yyyy-MM-dd</string>
+    <string name="placeholder_foodname">Food_Name</string>
+    <string name="placeholder_foodnote">note note note note note note note note note note note note</string>
+    <string name="expiration">expiration:</string>
+    <string name="production">production:</string>
+    <string name="upload">upload</string>
+    <string name="img_desc_foodphoto">food photo</string>
+    <string name="img_desc_swipe_delete">swipe delete button</string>
+    <string name="img_desc_blur_frigo_background">blur frigo background</string>
 </resources>

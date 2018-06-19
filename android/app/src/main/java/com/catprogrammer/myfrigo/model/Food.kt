@@ -4,10 +4,11 @@ import android.graphics.Bitmap
 import com.catprogrammer.myfrigo.`interface`.Crudable
 import com.catprogrammer.myfrigo.util.DateTimeUtil
 import com.catprogrammer.myfrigo.util.HttpUtil
+import com.google.gson.JsonObject
 import okhttp3.Callback
-import org.json.JSONObject
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class Food() : Crudable {
 
@@ -38,33 +39,46 @@ class Food() : Crudable {
 
     private val httpUtil = HttpUtil.getInstance()
 
+    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    fun productionDateString(): String {
+        return if (productionDate != null) productionDate!!.format(dateFormatter) else ""
+    }
+
+    fun expirationDateString(): String {
+        return if (expirationDate != null) expirationDate!!.format(dateFormatter) else ""
+    }
+
+    fun uploadDateString(): String {
+        return if (createdAt != null) createdAt!!.format(dateFormatter) else ""
+    }
+
     companion object Populator {
 
-        fun populateFood(json: JSONObject): Food {
+        fun populateFood(json: JsonObject): Food {
             val food = Food()
 
-            food.id = json.getInt("id")
-            food.count = json.getInt("count")
-            food.countType = if (json.getInt("count_type") == 0) CountType.COUNT_TYPE_NUMBER else CountType.COUNT_TYPE_PERCENTAGE
-            food.isHistory = json.getInt("is_history") != 0
+            food.id = json.get("id").asInt
+            food.count = json.get("count").asInt
+            food.countType = if (json.get("count_type").asInt == 0) CountType.COUNT_TYPE_NUMBER else CountType.COUNT_TYPE_PERCENTAGE
+            food.isHistory = json.get("is_history").asInt != 0
 
-            if (!json.isNull("name")) food.name = json.getString("name")
-            if (!json.isNull("note")) food.note = json.getString("note")
-            if (!json.isNull("barcode")) food.barcode = json.getString("barcode")
-            if (!json.isNull("production_date")) food.productionDate = DateTimeUtil.parseDateString(json.getString("production_date"))
-            if (!json.isNull("expiration_date")) food.expirationDate = DateTimeUtil.parseDateString(json.getString("expiration_date"))
-            if (!json.isNull("created_at")) food.createdAt = DateTimeUtil.parseDateTimeString(json.getString("created_at"))
-            if (!json.isNull("updated_at")) food.updatedAt = DateTimeUtil.parseDateTimeString(json.getString("updated_at"))
-            if (!json.isNull("history_id")) food.historyId = json.getInt("history_id")
+            if (!json.get("name").isJsonNull) food.name = json.get("name").asString
+            if (!json.get("note").isJsonNull) food.note = json.get("note").asString
+            if (!json.get("barcode").isJsonNull) food.barcode = json.get("barcode").asString
+            if (!json.get("production_date").isJsonNull) food.productionDate = DateTimeUtil.parseDateString(json.get("production_date").asString)
+            if (!json.get("expiration_date").isJsonNull) food.expirationDate = DateTimeUtil.parseDateString(json.get("expiration_date").asString)
+            if (!json.get("created_at").isJsonNull) food.createdAt = DateTimeUtil.parseDateTimeString(json.get("created_at").asString)
+            if (!json.get("updated_at").isJsonNull) food.updatedAt = DateTimeUtil.parseDateTimeString(json.get("updated_at").asString)
+            if (!json.get("history_id").isJsonNull) food.historyId = json.get("history_id").asInt
 
-            if (!json.isNull("img1")) {
-                val img1 = json.getJSONObject("img")
-                food.photoUrlSmall = img1.getJSONObject("profile").getString("url")
-                food.photoUrlLarge = img1.getJSONObject("large").getString("url")
-                food.photoUrlOriginal = img1.getJSONObject("original").getString("url")
+            if (!json.get("img1").isJsonNull) {
+                val img1 = json.get("img1").asJsonObject
+                food.photoUrlSmall = HttpUtil.imgBaseUrl + img1.get("profile").asJsonObject.get("url").asString
+                food.photoUrlLarge = HttpUtil.imgBaseUrl + img1.get("large").asJsonObject.get("url").asString
+                food.photoUrlOriginal = HttpUtil.imgBaseUrl + img1.get("original").asJsonObject.get("url").asString
             }
 
-            return Food()
+            return food
         }
     }
 
@@ -88,5 +102,9 @@ class Food() : Crudable {
 
     override fun delete(cb: Callback) {
         httpUtil.delete(this, cb)
+    }
+
+    override fun toString(): String {
+        return "Food(id=$id, count=$count, countType=$countType, productionDate=$productionDate, expirationDate=$expirationDate, isHistory=$isHistory, createdAt=$createdAt, updatedAt=$updatedAt, name='$name', note='$note', barcode=$barcode, historyId=$historyId, photoBitmap=$photoBitmap, photoBitmapPath=$photoBitmapPath, photoBitmapCompressed=$photoBitmapCompressed, photoUrlSmall=$photoUrlSmall, photoUrlLarge=$photoUrlLarge, photoUrlOriginal=$photoUrlOriginal, isBarcodeDetected=$isBarcodeDetected, isOcr1Detected=$isOcr1Detected, isOcr2Detected=$isOcr2Detected, isOcr3Detected=$isOcr3Detected, productionDateString='${productionDateString()}', expirationDateString='${expirationDateString()}')"
     }
 }

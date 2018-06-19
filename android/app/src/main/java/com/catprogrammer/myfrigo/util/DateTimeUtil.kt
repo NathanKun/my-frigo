@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 class DateTimeUtil {
     companion object {
         fun parseDateString(string: String): LocalDate {
-            val df = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             return LocalDate.parse(string, df)
         }
 

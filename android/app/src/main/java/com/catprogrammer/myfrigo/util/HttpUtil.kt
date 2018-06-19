@@ -12,6 +12,7 @@ class HttpUtil {
     companion object {
         private var singleton: HttpUtil? = null
         private const val baseUrl = "https://myfrigo.catprogrammer.com/api/foods"
+        const val imgBaseUrl = "https://myfrigo.catprogrammer.com"
 
         fun getInstance(): HttpUtil {
             if (singleton == null)
@@ -96,7 +97,7 @@ class HttpUtil {
         try {
 
             val request = Request.Builder()
-                    .url(baseUrl + url)
+                    .url(url)
                     .addHeader("Authorization", Const.AUTH)
                     .build()
 

@@ -1,75 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/foodlist_swipelayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:padding="0dp">
+    android:layout_height="wrap_content">
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="160dp"
+        android:layout_height="match_parent"
+        android:background="#66ff9999"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <!--What you want to show-->
 
 
-    <ImageView
-        android:id="@+id/foodlust_photo_imageiew"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/foodlist_vertical_33_guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="152dp"
+            android:layout_margin="8dp"
+            android:padding="0dp">
 
-    <TextView
-        android:id="@+id/foodlist_productiondate_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:text="2018-01-01"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/foodlist_delete_imageButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@color/transparent"
+                android:contentDescription="@string/img_desc_swipe_delete"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_delete_24px"
+                app:layout_constraintVertical_bias="0.33"/>
 
-    <TextView
-        android:id="@+id/foodlist_expirationdate_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:text="2018-12-31"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/foodlist_productiondate_textview" />
 
-    <TextView
-        android:id="@+id/foodlist_name_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Steak"
-        app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+            <SeekBar
+                android:id="@+id/foodlist_count_seekBar"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.85"
+                app:layout_constraintHorizontal_bias="0"/>
 
-    <TextView
-        android:id="@+id/foodlist_note_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="note"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
-        app:layout_constraintTop_toBottomOf="@+id/foodlist_name_textview" />
+            <TextView
+                android:id="@+id/foodlist_count_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.85"
+                app:layout_constraintHorizontal_bias="1"/>
 
-    <android.support.constraint.Guideline
-        android:id="@+id/foodlist_vertical_33_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.33" />
-</android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+    <!-- Bottom View End-->
+    <!-- Surface View Start -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:padding="1dp"
+        android:visibility="visible">
+        <!--What you want to show in SurfaceView-->
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="152dp"
+            android:layout_margin="8dp"
+            android:padding="0dp">
+
+            <ImageView
+                android:id="@+id/foodlist_photo_imageview"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:contentDescription="@string/img_desc_foodphoto"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/foodlist_vertical_33_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/btn_star_big_on" />
+
+            <TextView
+                android:id="@+id/foodlist_uploaddate_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/placeholder_yyyy_mm_dd"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_67_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_name_textview" />
+
+            <TextView
+                android:id="@+id/foodlist_productiondate_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/placeholder_yyyy_mm_dd"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_67_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_uploaddate_textview" />
+
+            <TextView
+                android:id="@+id/foodlist_expirationdate_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/placeholder_yyyy_mm_dd"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_67_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_productiondate_textview" />
+
+            <TextView
+                android:id="@+id/foodlist_name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/placeholder_foodname"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/foodlist_note_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:maxLines="5"
+                android:text="@string/placeholder_foodnote"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_expiration_pleintext" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/foodlist_vertical_33_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.33" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/foodlist_vertical_67_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.67" />
+
+            <TextView
+                android:id="@+id/foodlist_expiration_pleintext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/expiration"
+                app:layout_constraintEnd_toStartOf="@+id/foodlist_vertical_67_guideline"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_production_pleintext" />
+
+            <TextView
+                android:id="@+id/foodlist_production_pleintext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/production"
+                app:layout_constraintEnd_toStartOf="@+id/foodlist_vertical_67_guideline"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_upload_pleintext" />
+
+            <TextView
+                android:id="@+id/foodlist_upload_pleintext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/upload"
+                app:layout_constraintEnd_toStartOf="@+id/foodlist_vertical_67_guideline"
+                app:layout_constraintStart_toStartOf="@+id/foodlist_vertical_33_guideline"
+                app:layout_constraintTop_toBottomOf="@+id/foodlist_name_textview" />
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>
+
+

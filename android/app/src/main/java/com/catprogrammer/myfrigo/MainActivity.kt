@@ -1,34 +1,27 @@
 package com.catprogrammer.myfrigo
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.SimpleAdapter
 import android.widget.Toast
-import com.bumptech.glide.Glide
+import com.catprogrammer.myfrigo.model.Food
+import com.catprogrammer.myfrigo.util.HttpUtil
+import com.catprogrammer.myfrigo.util.ListViewAdapter
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
 
-
-    private val KEYS = arrayOf("name", "note", "production_date", "expiration_date", "photo")
-    private val IDS = intArrayOf(R.id.foodlist_name_textview, R.id.foodlist_note_textview,
-            R.id.foodlist_productiondate_textview, R.id.foodlist_expirationdate_textview,
-            R.id.foodlust_photo_imageiew)
-
-    private val dataToShow = ArrayList<Map<String, Any>>()
+    private var foods = ArrayList<Food>()
+    private val jsonParser = JsonParser()
+    private lateinit var mAdapter: ListViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,24 +33,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         // add swipe down refresh listener, call getData() when swipe down
-        foodlist_swiperefresh.setOnRefreshListener({ getData() })
+        foodlist_swiperefresh.setOnRefreshListener { getData() }
+        foodlist_swiperefresh.isRefreshing = true
 
         // add adapter to listview, link dataToShow to adapter
-        val mAdapter = SimpleAdapter(this, dataToShow, R.layout.listview_food, KEYS, IDS)
-        mAdapter.setViewBinder({ view, data, _ ->
-            if (view is ImageView && data is Bitmap) {
-                Glide.with(this)
-                        .load(data)
-                        .into(view)
-                return@setViewBinder true
-            }
-            return@setViewBinder false
-        })
+        mAdapter = ListViewAdapter(this, foods)
         foodlist_listview.adapter = mAdapter
+
+        getData()
     }
 
-    fun getData() {
-        val cb : Callback = object : Callback {
+    private fun getData() {
+        val cb: Callback = object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 runOnUiThread {
                     Toast.makeText(this@MainActivity, "Request failure", Toast.LENGTH_LONG).show()
@@ -65,7 +52,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call?, response: Response?) {
-
                 if (response == null) {
                     Log.d("http request", "response == null")
                 } else if (!response.isSuccessful) {
@@ -76,20 +62,37 @@ class MainActivity : AppCompatActivity() {
                     if (body == null) {
                         Log.d("http request", "body == null")
                     } else {
-                        val json = JSONObject(body.string())
-                        Log.d("http request", json.toString())
+                        val bodyStr = body.string()
+                        Log.d("http request", bodyStr)
+                        val json: JsonObject = jsonParser.parse(bodyStr).asJsonObject
 
-                        if (!json.getBoolean("success")) {
+                        if (!json.get("success").asBoolean) {
                             Log.d("http request", "success = false")
                         } else { // success = true
                             Log.d("http request", "success = true")
-                            runOnUiThread { Toast.makeText(applicationContext, "Uploaded", Toast.LENGTH_LONG).show() }
-                            return
-                        }
-                    }
-                }
-            }
+                            val data = json.get("data").asJsonObject
+                            val entries = data.entrySet() // foods
 
-        }
+                            foods = ArrayList()
+                            for (map in entries) { // one food
+                                val foodJson = map.value.asJsonObject
+                                foods.add(Food.populateFood(foodJson))
+
+                            }
+
+                            runOnUiThread {
+                                mAdapter.updateDataSet(foods)
+                                foodlist_swiperefresh.isRefreshing = false
+                            }
+                            return
+                        } // if json.success is true end
+                    } // if body not null end
+                } // if response isSuccessful end
+            } // fun onResponse end
+        }// val cb end
+
+        HttpUtil.getInstance().getAllFoods(cb)
     }
 }
+
+

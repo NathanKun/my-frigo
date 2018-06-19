@@ -6,4 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MenuActivity">
 
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/frigo_opened_blur"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/img_desc_blur_frigo_background" />
+
 </android.support.constraint.ConstraintLayout>

@@ -33,7 +33,8 @@ dependencies {
     implementation "com.android.support:support-v4:$support_version"
     implementation "com.android.support:support-media-compat:$support_version"
     implementation "com.android.support:exifinterface:$support_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.android.support:recyclerview-v7:$support_version"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     // firebase
     implementation "com.google.firebase:firebase-core:$firebase_version"
@@ -50,6 +51,12 @@ dependencies {
     // okhttp http client
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.squareup.okio:okio:1.14.0'
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    // swipeable listview
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
