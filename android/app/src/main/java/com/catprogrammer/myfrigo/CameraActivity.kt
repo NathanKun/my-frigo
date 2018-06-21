@@ -192,8 +192,8 @@ class CameraActivity : Activity() {
     }
 
 
-    fun resizeAndCompressImageBeforeSend(context: Context, filePath: String, fileName: String): String {
-        val MAX_IMAGE_SIZE = 1024 * 1024 // max final file size
+    private fun resizeAndCompressImageBeforeSend(context: Context, filePath: String, fileName: String): String {
+        val maxImageSize = 1024 * 1024 // max final file size
 
         // First decode with inJustDecodeBounds=true to check dimensions of image
         val options = BitmapFactory.Options()
@@ -221,7 +221,7 @@ class CameraActivity : Activity() {
             streamLength = bmpPicByteArray.size
             compressQuality -= 5
             Log.d("compressBitmap", "Size: " + streamLength / 1024 + " kb")
-        } while (streamLength >= MAX_IMAGE_SIZE)
+        } while (streamLength >= maxImageSize)
 
         try {
             //save the resized and compressed file to disk cache
@@ -239,7 +239,7 @@ class CameraActivity : Activity() {
     }
 
 
-    fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
         val debugTag = "MemoryInformation"
         // Image nin islenmeden onceki genislik ve yuksekligi
         val height = options.outHeight

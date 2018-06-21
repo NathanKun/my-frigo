@@ -37,9 +37,29 @@ abstract class GeneralCallback : Callback, CallbackActionInterface {
                     Log.d("HttpUtil", "success = false")
                     onFailure()
                 } else { // success = true
-                    Log.d("HttpUtil", "success = true")
-                    val data = json.get("data").asJsonObject
-                    onSuccess(data)
+                    when {
+                        // normal case
+                        json.get("data").isJsonObject -> onSuccess(json.get("data").asJsonObject)
+                        // GET /foods: if food count <= 1 it will return an array
+                        json.get("data").isJsonArray -> {
+                            val data = json.get("data").asJsonArray
+                            when {
+                                // food count == 0 : empty array
+                                data.size() == 0 -> onSuccess(JsonObject())
+                                // food count == 1 : array with one json object of Food
+                                data.size() == 1 -> {
+                                    // create a new json object with one property : food.id => foodJsonObject
+                                    // just like response of GET /index with food count >= 2
+                                    val foodData = data[0].asJsonObject
+                                    val returnData = JsonObject()
+                                    returnData.add(foodData.get("id").asString, foodData)
+                                    onSuccess(returnData)
+                                }
+                                else -> onFailure()
+                            }
+                        }
+                        else -> onFailure()
+                    }
                 }
                 return
             } // if json.success is true end

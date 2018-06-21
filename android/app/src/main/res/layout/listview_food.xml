@@ -4,6 +4,7 @@
     android:id="@+id/foodlist_swipelayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <!-- Bottom View Start-->
     <LinearLayout
         android:id="@+id/bottom_wrapper"
@@ -12,9 +13,8 @@
         android:background="#66ff9999"
         android:orientation="horizontal"
         android:weightSum="1">
+
         <!--What you want to show-->
-
-
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
@@ -22,21 +22,17 @@
             android:layout_margin="8dp"
             android:padding="0dp">
 
-            <ImageButton
-                android:id="@+id/foodlist_delete_imageButton"
+            <ImageView
+                android:id="@+id/foodlist_delete_imageview"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@color/transparent"
                 android:contentDescription="@string/img_desc_swipe_delete"
-                android:scaleType="fitCenter"
+                android:src="@drawable/ic_baseline_delete_24px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.33"
-                app:srcCompat="@drawable/ic_baseline_delete_24px" />
-
+                app:layout_constraintVertical_bias="0.33" />
 
             <SeekBar
                 android:id="@+id/foodlist_count_seekBar"
@@ -63,6 +59,7 @@
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
     <!-- Bottom View End-->
+
     <!-- Surface View Start -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,6 +67,7 @@
         android:background="#ffffff"
         android:padding="1dp"
         android:visibility="visible">
+
         <!--What you want to show in SurfaceView-->
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -86,8 +84,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/foodlist_vertical_33_guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:drawable/btn_star_big_on" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/foodlist_uploaddate_textview"

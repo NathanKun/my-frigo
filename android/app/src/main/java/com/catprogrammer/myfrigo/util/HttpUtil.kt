@@ -73,8 +73,8 @@ class HttpUtil {
         params["note"] = food.note
         params["count"] = food.count.toString()
         params["count_type"] = food.countType.value.toString()
-        if (food.productionDate != null) params["production_date"] = food.productionDate.toString()
-        if (food.expirationDate != null) params["expiration_date"] = food.expirationDate.toString()
+        params["production_date"] = if (food.productionDate != null) food.productionDate.toString() else ""
+        params["expiration_date"] = if (food.expirationDate != null) food.expirationDate.toString() else ""
 
         asynPatch(cb, "$baseUrl/${food.id}", params)
     }

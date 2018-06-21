@@ -2,8 +2,6 @@ package com.catprogrammer.myfrigo.util
 
 import android.app.Activity
 import android.content.Context
-import android.support.v7.widget.AppCompatSeekBar
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,12 +75,16 @@ class ListViewAdapter(private val mContext: Context, private var foods: List<Foo
         // photo
         val imageView = convertView.findViewById<ImageView>(R.id.foodlist_photo_imageview)
         Glide.with(mContext)
-                .setDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_launcher_background))
+                .setDefaultRequestOptions(
+                        RequestOptions()
+                                .placeholder(R.drawable.ic_launcher_background)
+                                .fallback(R.drawable.ic_launcher_background)
+                )
                 .load(food.photoUrlSmall)
                 .into(imageView)
 
         // button
-        val deleteBtn = convertView.findViewById<ImageButton>(R.id.foodlist_delete_imageButton)
+        val deleteBtn = convertView.findViewById<ImageView>(R.id.foodlist_delete_imageview)
         deleteBtn.setOnClickListener {
             food.count = 0
             food.push(callback)
@@ -104,5 +106,9 @@ class ListViewAdapter(private val mContext: Context, private var foods: List<Foo
     fun updateDataSet(newFoods: List<Food>) {
         foods = newFoods
         notifyDataSetChanged()
+    }
+
+    fun isClosed(position: Int): Boolean {
+        return !mItemManger.isOpen(position)
     }
 }
