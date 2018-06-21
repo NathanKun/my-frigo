@@ -34,8 +34,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_delete_24px"
-                app:layout_constraintVertical_bias="0.33"/>
+                app:layout_constraintVertical_bias="0.33"
+                app:srcCompat="@drawable/ic_baseline_delete_24px" />
 
 
             <SeekBar
@@ -44,10 +44,10 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.85"
-                app:layout_constraintHorizontal_bias="0"/>
+                app:layout_constraintVertical_bias="0.85" />
 
             <TextView
                 android:id="@+id/foodlist_count_textview"
@@ -55,10 +55,10 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.85"
-                app:layout_constraintHorizontal_bias="1"/>
+                app:layout_constraintVertical_bias="0.85" />
 
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
@@ -206,5 +206,3 @@
     </LinearLayout>
     <!-- Surface View End -->
 </com.daimajia.swipe.SwipeLayout>
-
-

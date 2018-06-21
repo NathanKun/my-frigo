@@ -1,7 +1,9 @@
 package com.catprogrammer.myfrigo.util
 
+import android.app.Activity
 import android.content.Context
 import android.support.v7.widget.AppCompatSeekBar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +13,22 @@ import com.bumptech.glide.request.RequestOptions
 import com.catprogrammer.myfrigo.R
 import com.catprogrammer.myfrigo.model.CountType
 import com.catprogrammer.myfrigo.model.Food
+import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.daimajia.swipe.adapters.BaseSwipeAdapter
+import com.google.gson.JsonObject
 
 class ListViewAdapter(private val mContext: Context, private var foods: List<Food>) : BaseSwipeAdapter() {
+
+    val callback: GeneralCallback = object : GeneralCallback() {
+        override fun onSuccess(data: JsonObject) {
+            (mContext as Activity).runOnUiThread { Toast.makeText(mContext, "Food Updated", Toast.LENGTH_LONG).show() }
+        }
+
+        override fun onFailure() {
+            (mContext as Activity).runOnUiThread { Toast.makeText(mContext, "Update Food Error", Toast.LENGTH_LONG).show() }
+        }
+
+    }
 
     override fun getSwipeLayoutResourceId(position: Int): Int {
         return R.id.foodlist_swipelayout
@@ -25,6 +40,8 @@ class ListViewAdapter(private val mContext: Context, private var foods: List<Foo
 
     override fun fillValues(position: Int, convertView: View) {
         val food = foods[position]
+
+        // text
         convertView.findViewById<TextView>(R.id.foodlist_name_textview).text = food.name
         convertView.findViewById<TextView>(R.id.foodlist_note_textview).text = food.note
         convertView.findViewById<TextView>(R.id.foodlist_uploaddate_textview).text = food.uploadDateString()
@@ -34,7 +51,8 @@ class ListViewAdapter(private val mContext: Context, private var foods: List<Foo
         val countTextView = convertView.findViewById<TextView>(R.id.foodlist_count_textview)
         countTextView.text = food.count.toString()
 
-        val seekBar = convertView.findViewById<AppCompatSeekBar>(R.id.foodlist_count_seekBar)
+        // seek bar
+        val seekBar = convertView.findViewById<SeekBar>(R.id.foodlist_count_seekBar)
         seekBar.min = 0
         if (food.countType == CountType.COUNT_TYPE_PERCENTAGE) {
             seekBar.max = 100
@@ -49,21 +67,25 @@ class ListViewAdapter(private val mContext: Context, private var foods: List<Foo
 
             override fun onStartTrackingTouch(p0: SeekBar?) {}
 
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                //food.push(cb)
+            override fun onStopTrackingTouch(sb: SeekBar?) {
+                food.count = seekBar.progress
+                food.push(callback)
             }
 
         })
 
+        // photo
         val imageView = convertView.findViewById<ImageView>(R.id.foodlist_photo_imageview)
         Glide.with(mContext)
                 .setDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_launcher_background))
                 .load(food.photoUrlSmall)
                 .into(imageView)
 
+        // button
         val deleteBtn = convertView.findViewById<ImageButton>(R.id.foodlist_delete_imageButton)
         deleteBtn.setOnClickListener {
-            Toast.makeText(mContext, "delete on click, id = ${food.id}", Toast.LENGTH_SHORT).show()
+            food.count = 0
+            food.push(callback)
         }
     }
 

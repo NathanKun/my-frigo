@@ -125,7 +125,7 @@ class HttpUtil {
             }
 
             val request = Request.Builder()
-                    .url(baseUrl + url)
+                    .url(url)
                     .addHeader("Authorization", Const.AUTH)
                     .post(builder.build())
                     .build()

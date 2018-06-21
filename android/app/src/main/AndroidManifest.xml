@@ -37,7 +37,8 @@
             android:name=".CameraActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".MenuActivity"></activity>
+        <activity android:name=".MenuActivity" />
+        <activity android:name=".FoodDetailActivity"></activity>
     </application>
 
 </manifest>

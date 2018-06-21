@@ -1,39 +1,36 @@
 package com.catprogrammer.myfrigo
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
-import android.support.media.ExifInterface
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.app.AppCompatActivity
+import android.support.media.ExifInterface
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.catprogrammer.myfrigo.model.Food
+import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.catprogrammer.myfrigo.util.BarcodeUtil
 import com.catprogrammer.myfrigo.util.OcrUtil
 import com.catprogrammer.myfrigo.util.PermissionsDelegate
+import com.google.gson.JsonObject
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
 import io.fotoapparat.log.logcat
 import io.fotoapparat.selector.*
 import kotlinx.android.synthetic.main.activity_camera.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import kotlin.concurrent.thread
 
 
-class CameraActivity : AppCompatActivity() {
+class CameraActivity : Activity() {
 
     private val tag = "camera"
 
@@ -73,40 +70,14 @@ class CameraActivity : AppCompatActivity() {
     private fun takePicture() {
 
         // callback for http request
-        val httpCallback: Callback = object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                Log.d("http request", "response failure")
+        val httpCallback: GeneralCallback = object : GeneralCallback() {
+            override fun onSuccess(data: JsonObject) {
+                runOnUiThread { Toast.makeText(this@CameraActivity, "Uploaded", Toast.LENGTH_LONG).show() }
             }
 
-            override fun onResponse(call: Call?, response: Response?) {
-
-                if (response == null) {
-                    Log.d("http request", "response == null")
-                } else if (!response.isSuccessful) {
-                    Log.d("http request", "response not successful")
-                    Log.d("http request", "response code: ${response.code()}")
-                } else {
-                    val body = response.body()
-                    if (body == null) {
-                        Log.d("http request", "body == null")
-                    } else {
-                        val json = JSONObject(body.string())
-                        Log.d("http request", json.toString())
-
-                        if (!json.getBoolean("success")) {
-                            Log.d("http request", "success = false")
-                        } else { // success = true
-                            Log.d("http request", "success = true")
-                            runOnUiThread { Toast.makeText(applicationContext, "Uploaded", Toast.LENGTH_LONG).show() }
-                            return
-                        }
-                    }
-                }
-
-                runOnUiThread { Toast.makeText(applicationContext, "Error", Toast.LENGTH_LONG).show() }
-                return
+            override fun onFailure() {
+                runOnUiThread { Toast.makeText(this@CameraActivity, "Error", Toast.LENGTH_LONG).show() }
             }
-
         }
 
         // callback for running after detect
