@@ -18,7 +18,7 @@
         android:textSize="18sp"
         android:labelFor="@id/fooddetail_name_edittext"
         app:layout_constraintBottom_toBottomOf="@+id/fooddetail_name_edittext"
-        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fooddetail_name_edittext" />
@@ -33,7 +33,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -48,7 +48,7 @@
         android:textSize="18sp"
         android:labelFor="@id/fooddetail_upload_edittext"
         app:layout_constraintBottom_toBottomOf="@+id/fooddetail_upload_edittext"
-        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fooddetail_upload_edittext" />
@@ -67,7 +67,7 @@
         android:cursorVisible="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintTop_toBottomOf="@+id/fooddetail_name_edittext" />
 
     <TextView
@@ -81,7 +81,7 @@
         android:textSize="18sp"
         android:labelFor="@id/fooddetail_production_edittext"
         app:layout_constraintBottom_toBottomOf="@+id/fooddetail_production_edittext"
-        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fooddetail_production_edittext" />
@@ -100,7 +100,7 @@
         android:cursorVisible="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintTop_toBottomOf="@+id/fooddetail_upload_edittext" />
 
     <TextView
@@ -115,7 +115,7 @@
         android:textSize="18sp"
         android:labelFor="@id/fooddetail_expiration_label"
         app:layout_constraintBottom_toBottomOf="@+id/fooddetail_expiration_edittext"
-        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fooddetail_expiration_edittext" />
@@ -134,7 +134,7 @@
         android:cursorVisible="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintTop_toBottomOf="@+id/fooddetail_production_edittext" />
 
     <TextView
@@ -149,7 +149,7 @@
         android:textSize="18sp"
         android:labelFor="@id/fooddetail_note_edittext"
         app:layout_constraintBottom_toBottomOf="@+id/fooddetail_note_edittext"
-        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fooddetail_note_edittext" />
@@ -157,22 +157,67 @@
     <com.cielyang.android.clearableedittext.ClearableEditText
         android:id="@+id/fooddetail_note_edittext"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:inputType="text|textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_30_guideline"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
         app:layout_constraintTop_toBottomOf="@+id/fooddetail_expiration_edittext" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/fooddetail_vertical_30_guideline"
+    <Switch
+        android:id="@+id/fooddetail_counttype_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.3"/>
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:showText="false"
+        app:layout_constraintBottom_toBottomOf="@+id/fooddetail_count_percentage_seekBar"
+        app:layout_constraintStart_toEndOf="@+id/fooddetail_counttype_label"
+        app:layout_constraintTop_toTopOf="@+id/fooddetail_count_percentage_seekBar" />
+
+    <TextView
+        android:id="@+id/fooddetail_counttype_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:labelFor="@id/fooddetail_count_number_editText"
+        android:text="@string/switch_counttype_percentage"
+        app:layout_constraintBottom_toBottomOf="@+id/fooddetail_count_percentage_seekBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fooddetail_count_percentage_seekBar" />
+
+    <SeekBar
+        android:id="@+id/fooddetail_count_percentage_seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/fooddetail_note_edittext" />
+
+    <EditText
+        android:id="@+id/fooddetail_count_number_editText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="number"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/fooddetail_vertical_35_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/fooddetail_count_percentage_seekBar" />
 
     <ImageView
         android:id="@+id/fooddetail_photo_imageView"
@@ -182,11 +227,11 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/img_desc_food_activity_image"
         app:layout_constraintBottom_toTopOf="@+id/fooddetail_save_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fooddetail_note_edittext"
-        android:contentDescription="@string/img_desc_food_activity_image" />
+        app:layout_constraintTop_toBottomOf="@+id/fooddetail_count_number_editText" />
 
     <Button
         android:id="@+id/fooddetail_save_button"
@@ -199,6 +244,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/fooddetail_vertical_35_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35"/>
 
 
 </android.support.constraint.ConstraintLayout>

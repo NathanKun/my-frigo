@@ -3,18 +3,19 @@ package com.catprogrammer.myfrigo
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.*
 import com.bumptech.glide.Glide
+import com.catprogrammer.myfrigo.model.CountType
 import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_food_detail.*
 import java.time.LocalDate
-import android.view.ViewGroup
-import android.graphics.drawable.ColorDrawable
-import android.view.Window
-import android.widget.*
 
 
 class FoodDetailActivity : Activity() {
@@ -48,20 +49,55 @@ class FoodDetailActivity : Activity() {
                     food.expirationDate = LocalDate.of(year, monthOfYear, dayOfMonth)
                     fooddetail_expiration_edittext.setText(food.expirationDateString())
                 }
-
-        fooddetail_production_edittext.setOnClickListener(getEditTextOnClickListener(food.productionDate, productionOnDateSetListener))
-        fooddetail_expiration_edittext.setOnClickListener(getEditTextOnClickListener(food.expirationDate, expirationOnDateSetListener))
+        val productionDatePickerDialog = getDatePickerDialog(food.productionDate, productionOnDateSetListener)
+        val expirationDatePickerDialog = getDatePickerDialog(food.expirationDate, expirationOnDateSetListener)
+        fooddetail_production_edittext.setOnClickListener { productionDatePickerDialog.show() }
+        fooddetail_expiration_edittext.setOnClickListener { expirationDatePickerDialog.show() }
 
         // prd date and exp date EditText on long click listener
         // clear text on long press
-        val longPressListener: View.OnLongClickListener =
-                View.OnLongClickListener { view: View ->
-                    (view as EditText).setText("")
-                    return@OnLongClickListener true
-                }
+        fooddetail_production_edittext.setOnLongClickListener { _: View ->
+            fooddetail_production_edittext.setText("")
+            food.productionDate = null
+            return@setOnLongClickListener true
+        }
+        fooddetail_expiration_edittext.setOnLongClickListener { _: View ->
+            fooddetail_expiration_edittext.setText("")
+            food.expirationDate = null
+            return@setOnLongClickListener true
+        }
 
-        fooddetail_production_edittext.setOnLongClickListener(longPressListener)
-        fooddetail_expiration_edittext.setOnLongClickListener(longPressListener)
+        // count type switch
+        fooddetail_counttype_switch.isChecked = food.countType == CountType.COUNT_TYPE_PERCENTAGE
+        fooddetail_counttype_switch.setOnCheckedChangeListener { _: CompoundButton, b: Boolean ->
+            food.countType = if (b) CountType.COUNT_TYPE_PERCENTAGE else CountType.COUNT_TYPE_NUMBER
+            onCountTypeUpdate()
+        }
+        onCountTypeUpdate()
+
+        // count by % - seek bar
+        fooddetail_count_percentage_seekBar.max = 100
+        fooddetail_count_percentage_seekBar.min = 0
+        fooddetail_count_percentage_seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                fooddetail_count_number_editText.setText(progress.toString())
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
+
+            override fun onStopTrackingTouch(sb: SeekBar?) {
+                food.count = fooddetail_count_percentage_seekBar.progress
+            }
+        })
+
+        // count by number - edit text
+        fooddetail_count_number_editText.setText(food.count.toString())
+
+        if(food.countType == CountType.COUNT_TYPE_PERCENTAGE) {
+            fooddetail_count_percentage_seekBar.progress = food.count
+        } else {
+            fooddetail_count_percentage_seekBar.visibility = View.INVISIBLE
+        }
 
         // photo
         if (food.photoUrlLarge != null && food.photoUrlLarge!!.startsWith("https://")) {
@@ -91,26 +127,26 @@ class FoodDetailActivity : Activity() {
         fooddetail_save_button.setOnClickListener {
             food.name = fooddetail_name_edittext.text.toString()
             food.note = fooddetail_note_edittext.text.toString()
+            if(food.countType == CountType.COUNT_TYPE_NUMBER) food.count = fooddetail_count_number_editText.text.toString().toInt()
             food.push(cb)
         }
     }
 
-    private fun getEditTextOnClickListener(date: LocalDate?, onDateSetListener: DatePickerDialog.OnDateSetListener): (View) -> Unit {
-        return { _: View ->
-            val year: Int
-            val month: Int
-            val day: Int
-            if (date != null) {
-                year = date.year
-                month = date.monthValue
-                day = date.dayOfMonth
-            } else {
-                year = today.year
-                month = today.monthValue
-                day = today.dayOfMonth
-            }
-            DatePickerDialog(this, onDateSetListener, year, month, day).show()
+    private fun getDatePickerDialog(date: LocalDate?, onDateSetListener: DatePickerDialog.OnDateSetListener): DatePickerDialog {
+        val year: Int
+        val month: Int
+        val day: Int
+        if (date != null) {
+            year = date.year
+            month = date.monthValue
+            day = date.dayOfMonth
+        } else {
+            year = today.year
+            month = today.monthValue
+            day = today.dayOfMonth
         }
+        return DatePickerDialog(this, onDateSetListener, year, month, day)
+
     }
 
     private fun getImageDialogBuilder(url: String): Dialog {
@@ -130,6 +166,18 @@ class FoodDetailActivity : Activity() {
                 ViewGroup.LayoutParams.MATCH_PARENT))
         //builder.show()
         return builder
+    }
+
+    private fun onCountTypeUpdate() {
+        if (food.countType == CountType.COUNT_TYPE_PERCENTAGE) {
+            fooddetail_counttype_label.text = resources.getText(R.string.switch_counttype_percentage)
+            fooddetail_count_percentage_seekBar.visibility = View.VISIBLE
+            fooddetail_count_number_editText.isEnabled = false
+        } else {
+            fooddetail_counttype_label.text = resources.getText(R.string.switch_counttype_number)
+            fooddetail_count_percentage_seekBar.visibility = View.INVISIBLE
+            fooddetail_count_number_editText.isEnabled = true
+        }
     }
 
 }

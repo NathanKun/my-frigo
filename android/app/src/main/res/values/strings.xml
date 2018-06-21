@@ -17,4 +17,11 @@
     <string name="upload">Upload</string>
     <string name="img_desc_food_activity_image">food activity image</string>
     <string name="btn_save">Save</string>
+    <string name="switch_percentage_or_number">% or nb</string>
+    <string name="switch_counttype_percentage">百分比计算</string>
+    <string name="switch_counttype_number">数量计算</string>
+    <string name="btn_new_photo">New</string>
+    <string name="btn_sort_expiration">Exp</string>
+    <string name="btn_sort_production">prd</string>
+    <string name="btn_sort_upload">upload</string>
 </resources>
