@@ -89,18 +89,12 @@ class FoodRepository extends BaseRepository
 
         if (Input::hasFile('img1')) {
             $model->img1 = Input::file('img1');
-        } else {
-            $model->img1 = null;
         }
         if (Input::hasFile('img2')) {
             $model->img2 = Input::file('img2');
-        } else {
-            $model->img2 = null;
         }
         if (Input::hasFile('img3')) {
             $model->img3 = Input::file('img3');
-        } else {
-            $model->img3 = null;
         }
 
         $model = $this->updateRelations($model, $attributes);
