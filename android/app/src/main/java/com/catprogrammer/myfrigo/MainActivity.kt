@@ -23,11 +23,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btn_to_camera.setOnClickListener {
-            val intent = Intent(this, CameraActivity::class.java)
-            startActivity(intent)
-        }
-
         // add swipe down refresh listener, call getData() when swipe down
         foodlist_swiperefresh.setOnRefreshListener { getData() }
 
@@ -35,10 +30,42 @@ class MainActivity : Activity() {
         mAdapter = ListViewAdapter(this, emptyList())
         foodlist_listview.adapter = mAdapter
         foodlist_listview.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
-            val food = foods[i]
-            val intent = Intent(this, FoodDetailActivity::class.java)
-            intent.putExtra("food", food)
+            if(mAdapter.isClosed(i)) {
+                val food = foods[i]
+                val intent = Intent(this, FoodDetailActivity::class.java)
+                intent.putExtra("food", food)
+                startActivity(intent)
+            } // else ignore event
+        }
+
+        // btn to camera
+        btn_to_camera.setOnClickListener {
+            mAdapter.closeAllItems()
+            val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
+        }
+
+        // buttons sort
+        btn_sort_expiration.setOnClickListener {
+            mAdapter.closeAllItems()
+            mAdapter.updateDataSet(
+                    foods.sortedWith(
+                            getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
+                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC)))
+        }
+        btn_sort_production.setOnClickListener {
+            mAdapter.closeAllItems()
+            mAdapter.updateDataSet(
+                    foods.sortedWith(
+                            getComparator(SortBy.PRD, SortDirection.ASC, SortBy.EXP,
+                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC)))
+        }
+        btn_sort_upload.setOnClickListener {
+            mAdapter.closeAllItems()
+            mAdapter.updateDataSet(
+                    foods.sortedWith(
+                            getComparator(SortBy.UPL, SortDirection.DESC, SortBy.PRD,
+                                    SortDirection.ASC, SortBy.EXP, SortDirection.ASC)))
         }
     }
 
@@ -47,6 +74,9 @@ class MainActivity : Activity() {
         getData()
     }
 
+    /**
+     * Get all foods data, and update the list view
+     */
     private fun getData() {
         val cb: GeneralCallback = object : GeneralCallback() {
             override fun onSuccess(data: JsonObject) {
@@ -57,13 +87,14 @@ class MainActivity : Activity() {
                     val foodJson = map.value.asJsonObject
                     foods.add(Food.populateFood(foodJson))
                 }
-                foods.reverse()
+                foods.sortWith(
+                        getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
+                                SortDirection.ASC, SortBy.UPL, SortDirection.DESC))
 
                 runOnUiThread {
                     mAdapter.updateDataSet(foods)
                     foodlist_swiperefresh.isRefreshing = false
                 }
-                return
             }
 
             override fun onFailure() {
@@ -75,6 +106,67 @@ class MainActivity : Activity() {
 
         foodlist_swiperefresh.isRefreshing = true
         HttpUtil.getInstance().getAllFoods(cb)
+    }
+
+    /**
+     * Get a Food comparator for sorting the Food list
+     *
+     * @property    sortBy1 1st attribute to sort
+     * @property    sortBy1 2st attribute to sort
+     * @property    sortBy1 3st attribute to sort
+     * @property    sortDirection1 sort direction of sortBy1
+     * @property    sortDirection2 sort direction of sortBy2
+     * @property    sortDirection3 sort direction of sortBy3
+     */
+    private fun getComparator(sortBy1: SortBy, sortDirection1: SortDirection,
+                              sortBy2: SortBy, sortDirection2: SortDirection,
+                              sortBy3: SortBy, sortDirection3: SortDirection): Comparator<Food> {
+
+        fun internalGetComparator(sb: SortBy, sd: SortDirection, comparator: Comparator<Food>?): Comparator<Food> {
+            return when (sb) {
+                SortBy.PRD -> when (sd) {
+                    SortDirection.ASC ->
+                        comparator?.thenBy(nullsLast(), Food::productionDate)
+                                ?: compareBy(nullsLast(), Food::productionDate)
+
+                    SortDirection.DESC ->
+                        comparator?.thenByDescending(nullsLast(), Food::productionDate)
+                                ?: compareByDescending(nullsLast(), Food::productionDate)
+                }
+                SortBy.EXP -> when (sd) {
+                    SortDirection.ASC ->
+                        comparator?.thenBy(nullsLast(), Food::expirationDate)
+                                ?: compareBy(nullsLast(), Food::expirationDate)
+
+                    SortDirection.DESC ->
+                        comparator?.thenByDescending(nullsLast(), Food::expirationDate)
+                                ?: compareByDescending(nullsLast(), Food::expirationDate)
+                }
+                SortBy.UPL -> when (sd) {
+                    SortDirection.ASC ->
+                        comparator?.thenBy(nullsLast(), Food::createdAt)
+                                ?: compareBy(nullsLast(), Food::createdAt)
+
+                    SortDirection.DESC ->
+                        comparator?.thenByDescending(nullsLast(), Food::createdAt)
+                                ?: compareByDescending(nullsLast(), Food::createdAt)
+                }
+            }
+        }
+
+        var comparator = internalGetComparator(sortBy1, sortDirection1, null)
+        comparator = internalGetComparator(sortBy2, sortDirection2, comparator)
+        comparator = internalGetComparator(sortBy3, sortDirection3, comparator)
+        return comparator
+
+    }
+
+    private enum class SortDirection {
+        DESC, ASC
+    }
+
+    private enum class SortBy {
+        PRD, EXP, UPL
     }
 }
 
