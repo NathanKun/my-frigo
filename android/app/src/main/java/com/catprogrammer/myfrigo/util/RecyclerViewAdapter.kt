@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
-import android.os.Parcel
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
@@ -205,9 +204,7 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
     }
 
 
-    fun updateDataSet(newFoods: ArrayList<Food>) {
-        foods = newFoods
-        //notifyDataSetChanged()
+    fun notifySort() {
         if (foods.size != 0)
             notifyItemRangeChanged(0, foods.size)
     }

@@ -39,7 +39,7 @@ class MainActivity : Activity() {
         foodlist_swiperefresh.setOnRefreshListener { getData() }
 
         // add adapter to listview, link dataToShow to adapter
-        mAdapter = RecyclerViewAdapter(this, ArrayList(), Handler())
+        mAdapter = RecyclerViewAdapter(this, foods, Handler())
         mAdapter.mode = Attributes.Mode.Single
         foodlist_recyclerview.layoutManager = LinearLayoutManager(this)
         foodlist_recyclerview.adapter = mAdapter
@@ -57,24 +57,24 @@ class MainActivity : Activity() {
         // buttons sort
         btn_sort_expiration.setOnClickListener {
             mAdapter.closeAllItems()
-            mAdapter.updateDataSet(
-                    ArrayList(foods.sortedWith(
-                            getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
-                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC))))
+            foods.sortWith(
+                    getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
+                            SortDirection.ASC, SortBy.UPL, SortDirection.DESC))
+            mAdapter.notifySort()
         }
         btn_sort_production.setOnClickListener {
             mAdapter.closeAllItems()
-            mAdapter.updateDataSet(
-                    ArrayList(foods.sortedWith(
-                            getComparator(SortBy.PRD, SortDirection.ASC, SortBy.EXP,
-                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC))))
+            foods.sortedWith(
+                    getComparator(SortBy.PRD, SortDirection.ASC, SortBy.EXP,
+                            SortDirection.ASC, SortBy.UPL, SortDirection.DESC))
+            mAdapter.notifySort()
         }
         btn_sort_upload.setOnClickListener {
             mAdapter.closeAllItems()
-            mAdapter.updateDataSet(
-                    ArrayList(foods.sortedWith(
-                            getComparator(SortBy.UPL, SortDirection.DESC, SortBy.PRD,
-                                    SortDirection.ASC, SortBy.EXP, SortDirection.ASC))))
+            foods.sortedWith(
+                    getComparator(SortBy.UPL, SortDirection.DESC, SortBy.PRD,
+                            SortDirection.ASC, SortBy.EXP, SortDirection.ASC))
+            mAdapter.notifySort()
         }
     }
 
@@ -91,17 +91,17 @@ class MainActivity : Activity() {
             override fun onSuccess(data: JsonObject) {
                 val entries = data.entrySet() // foods
 
-                foods = ArrayList()
-                for (map in entries) { // one food
-                    val foodJson = map.value.asJsonObject
-                    foods.add(Food.populateFood(foodJson))
-                }
-                foods.sortWith(
-                        getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
-                                SortDirection.ASC, SortBy.UPL, SortDirection.DESC))
-
                 runOnUiThread {
-                    mAdapter.updateDataSet(foods)
+                    foods.clear()
+                    for (map in entries) { // one food
+                        val foodJson = map.value.asJsonObject
+                        foods.add(Food.populateFood(foodJson))
+                    }
+                    foods.sortWith(
+                            getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
+                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC))
+
+                    mAdapter.notifySort()
                     foodlist_swiperefresh.isRefreshing = false
                 }
             }
