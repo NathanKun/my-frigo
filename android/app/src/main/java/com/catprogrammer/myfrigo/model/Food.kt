@@ -205,7 +205,7 @@ class Food() : Crudable, Parcelable {
             parcel.writeInt(createdAt!!.second)
             parcel.writeInt(createdAt!!.nano)
         } else {
-            repeat(7) {parcel.writeInt(-1)}
+            repeat(7) { parcel.writeInt(-1) }
         }
         if (updatedAt != null) {
             parcel.writeInt(updatedAt!!.year)
@@ -216,25 +216,51 @@ class Food() : Crudable, Parcelable {
             parcel.writeInt(updatedAt!!.second)
             parcel.writeInt(updatedAt!!.nano)
         } else {
-            repeat(7) {parcel.writeInt(-1)}
+            repeat(7) { parcel.writeInt(-1) }
         }
         if (productionDate != null) {
             parcel.writeInt(productionDate!!.year)
             parcel.writeInt(productionDate!!.monthValue)
             parcel.writeInt(productionDate!!.dayOfMonth)
         } else {
-            repeat(3) {parcel.writeInt(-1)}
+            repeat(3) { parcel.writeInt(-1) }
         }
         if (expirationDate != null) {
             parcel.writeInt(expirationDate!!.year)
             parcel.writeInt(expirationDate!!.monthValue)
             parcel.writeInt(expirationDate!!.dayOfMonth)
         } else {
-            repeat(3) {parcel.writeInt(-1)}
+            repeat(3) { parcel.writeInt(-1) }
         }
     }
 
     override fun describeContents(): Int {
         return 0
+    }
+
+    fun copy(): Food {
+        val f = Food()
+        f.count = count
+        f.countType = countType
+        f.name = name
+        f.note = note
+        f.photoUrlOriginal = photoUrlOriginal
+        f.photoUrlLarge = photoUrlLarge
+        f.photoUrlSmall = photoUrlSmall
+        f.id = id
+        f.barcode = barcode
+        f.historyId = historyId
+        f.isHistory = isHistory
+
+        if (createdAt != null)
+            f.createdAt = LocalDateTime.of(createdAt!!.toLocalDate(), createdAt!!.toLocalTime())
+        if (updatedAt != null)
+            f.updatedAt = LocalDateTime.of(updatedAt!!.toLocalDate(), updatedAt!!.toLocalTime())
+        if (productionDate != null)
+            f.productionDate = LocalDate.of(productionDate!!.year, productionDate!!.month, productionDate!!.dayOfMonth)
+        if (expirationDate != null)
+            f.expirationDate = LocalDate.of(expirationDate!!.year, expirationDate!!.month, expirationDate!!.dayOfMonth)
+
+        return f
     }
 }

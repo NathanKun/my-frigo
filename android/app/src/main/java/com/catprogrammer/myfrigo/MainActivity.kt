@@ -3,21 +3,33 @@ package com.catprogrammer.myfrigo
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
+import android.os.Handler
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.widget.Toast
 import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.catprogrammer.myfrigo.util.HttpUtil
-import com.catprogrammer.myfrigo.util.ListViewAdapter
+import com.catprogrammer.myfrigo.util.RecyclerViewAdapter
+import com.daimajia.swipe.util.Attributes
 import com.google.gson.JsonObject
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : Activity() {
 
     private var foods = ArrayList<Food>()
-    private lateinit var mAdapter: ListViewAdapter
+    private lateinit var mAdapter: RecyclerViewAdapter
+
+
+    var onScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
+
+        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            mAdapter.closeAllItems()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,16 +39,13 @@ class MainActivity : Activity() {
         foodlist_swiperefresh.setOnRefreshListener { getData() }
 
         // add adapter to listview, link dataToShow to adapter
-        mAdapter = ListViewAdapter(this, emptyList())
-        foodlist_listview.adapter = mAdapter
-        foodlist_listview.setOnItemClickListener { _: AdapterView<*>, _: View, i: Int, _: Long ->
-            if(mAdapter.isClosed(i)) {
-                val food = foods[i]
-                val intent = Intent(this, FoodDetailActivity::class.java)
-                intent.putExtra("food", food)
-                startActivity(intent)
-            } // else ignore event
-        }
+        mAdapter = RecyclerViewAdapter(this, ArrayList(), Handler())
+        mAdapter.mode = Attributes.Mode.Single
+        foodlist_recyclerview.layoutManager = LinearLayoutManager(this)
+        foodlist_recyclerview.adapter = mAdapter
+        foodlist_recyclerview.addOnScrollListener(onScrollListener)
+        //foodlist_recyclerview.addItemDecoration(DividerItemDecoration(resources.getDrawable(R.drawable.divider)))
+        foodlist_recyclerview.itemAnimator = SlideInLeftAnimator()
 
         // btn to camera
         btn_to_camera.setOnClickListener {
@@ -49,23 +58,23 @@ class MainActivity : Activity() {
         btn_sort_expiration.setOnClickListener {
             mAdapter.closeAllItems()
             mAdapter.updateDataSet(
-                    foods.sortedWith(
+                    ArrayList(foods.sortedWith(
                             getComparator(SortBy.EXP, SortDirection.ASC, SortBy.PRD,
-                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC)))
+                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC))))
         }
         btn_sort_production.setOnClickListener {
             mAdapter.closeAllItems()
             mAdapter.updateDataSet(
-                    foods.sortedWith(
+                    ArrayList(foods.sortedWith(
                             getComparator(SortBy.PRD, SortDirection.ASC, SortBy.EXP,
-                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC)))
+                                    SortDirection.ASC, SortBy.UPL, SortDirection.DESC))))
         }
         btn_sort_upload.setOnClickListener {
             mAdapter.closeAllItems()
             mAdapter.updateDataSet(
-                    foods.sortedWith(
+                    ArrayList(foods.sortedWith(
                             getComparator(SortBy.UPL, SortDirection.DESC, SortBy.PRD,
-                                    SortDirection.ASC, SortBy.EXP, SortDirection.ASC)))
+                                    SortDirection.ASC, SortBy.EXP, SortDirection.ASC))))
         }
     }
 
