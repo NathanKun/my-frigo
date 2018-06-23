@@ -72,11 +72,11 @@ class CameraActivity : Activity() {
         // callback for http request
         val httpCallback: GeneralCallback = object : GeneralCallback() {
             override fun onSuccess(data: JsonObject) {
-                runOnUiThread { Toast.makeText(this@CameraActivity, "Uploaded", Toast.LENGTH_LONG).show() }
+                runOnUiThread { Toast.makeText(this@CameraActivity, "上传成功", Toast.LENGTH_LONG).show() }
             }
 
             override fun onFailure() {
-                runOnUiThread { Toast.makeText(this@CameraActivity, "Error", Toast.LENGTH_LONG).show() }
+                runOnUiThread { Toast.makeText(this@CameraActivity, "上传失败", Toast.LENGTH_LONG).show() }
             }
         }
 

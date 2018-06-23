@@ -9,23 +9,29 @@ import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.google.gson.JsonObject
 
 class UndoListener(private val context: Context, private val adapter: RecyclerViewAdapter,
-                   private val food: Food, private val position: Int) : View.OnClickListener {
+                   private val undoFood: Food, private val position: Int, private val isUndoDelete: Boolean)
+    : View.OnClickListener {
 
     val cb = object : GeneralCallback() {
         override fun onSuccess(data: JsonObject) {
             (context as Activity).runOnUiThread {
-                adapter.foods.add(position, food)
-                adapter.notifyItemInserted(position)
+                if (isUndoDelete) {
+                    adapter.foods.add(position, undoFood)
+                    adapter.notifyItemInserted(position)
+                } else {
+                    adapter.foods[position] = undoFood
+                    adapter.notifyItemChanged(position)
+                }
             }
         }
 
         override fun onFailure() {
-            Toast.makeText(context, "Undo error", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "撤销失败", Toast.LENGTH_SHORT).show()
         }
 
     }
 
     override fun onClick(v: View) {
-        food.push(cb)
+        undoFood.push(cb)
     }
 }

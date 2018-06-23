@@ -108,7 +108,7 @@ class MainActivity : Activity() {
 
             override fun onFailure() {
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Request failure", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, "获取食物数据失败", Toast.LENGTH_LONG).show()
                 }
             }
         }// val cb end

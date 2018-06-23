@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_to_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -28,49 +28,45 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <Button
-        android:id="@+id/btn_sort_expiration"
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/main_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/btn_sort_expiration"
+        android:elevation="8dp"
+        app:fab_addButtonSize="normal"
+        app:fab_expandDirection="up"
+        app:fab_labelsPosition="left"
+        app:fab_labelStyle="@style/fab_menu_labels_style"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/btn_sort_production"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/btn_sort_production"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_sort_expiration" />
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_sort_expiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_title="@string/btn_sort_expiration" />
 
-    <Button
-        android:id="@+id/btn_sort_upload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/btn_sort_upload"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_sort_production" />
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_sort_production"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_title="@string/btn_sort_production" />
 
-    <Button
-        android:id="@+id/btn_to_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/btn_new_photo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_sort_upload" />
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_sort_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_title="@string/btn_sort_upload" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_to_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_size="mini"
+            app:fab_title="@string/btn_new_photo" />
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </android.support.constraint.ConstraintLayout>

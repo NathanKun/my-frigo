@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.catprogrammer.myfrigo.FoodDetailActivity
@@ -55,16 +54,6 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
 
 
     /* class RecyclerViewAdapter */
-
-    private val callback: GeneralCallback = object : GeneralCallback() {
-        override fun onSuccess(data: JsonObject) {
-            (mContext as Activity).runOnUiThread { Toast.makeText(mContext, "Food Updated", Toast.LENGTH_LONG).show() }
-        }
-
-        override fun onFailure() {
-            (mContext as Activity).runOnUiThread { Toast.makeText(mContext, "Update Food Error", Toast.LENGTH_LONG).show() }
-        }
-    }
 
     private var openingPosition: Int = -1
 
@@ -146,15 +135,11 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
             override fun onStartTrackingTouch(p0: SeekBar?) {}
 
             override fun onStopTrackingTouch(sb: SeekBar?) {
-                food.count = seekBar.progress
-                food.push(callback)
+                // clone food
+                val undoFood = food.copy()
 
-                if (food.count == 0) {
-                    foods.removeAt(position)
-                    notifyItemRemoved(position)
-                } else {
-                    notifyItemChanged(position)
-                }
+                food.count = seekBar.progress
+                food.push(getUpdateFoodCallback(viewHolder.adapterPosition, undoFood))
             }
 
         })
@@ -178,18 +163,8 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
 
             // update food
             food.count = 0
-            food.push(callback)
-
-            // animation
-            foods.removeAt(position)
-            notifyItemRemoved(position)
-
-            // snackbar for undo
-            Snackbar.make(
-                    (mContext as Activity).findViewById(R.id.activity_main) as ConstraintLayout,
-                    "deleted", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO", UndoListener(mContext, this, undoFood, position))
-                    .show()
+            food.push(getUpdateFoodCallback(viewHolder.adapterPosition, undoFood))
+            closeItem(viewHolder.adapterPosition)
         }
 
         mItemManger.bindView(viewHolder.itemView, position)
@@ -207,5 +182,40 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
     fun notifySort() {
         if (foods.size != 0)
             notifyItemRangeChanged(0, foods.size)
+    }
+
+    private fun getUpdateFoodCallback(position: Int, undoFood: Food): GeneralCallback {
+        return object : GeneralCallback() {
+            override fun onSuccess(data: JsonObject) {
+                val food = Food.populateFood(data)
+
+                (mContext as Activity).runOnUiThread {
+                    if (food.count == 0) {
+                        foods.removeAt(position)
+                        notifyItemRemoved(position)
+                    } else {
+                        notifyItemChanged(position)
+                    }
+
+                    // snackbar for undo
+                    val text = if (food.count == 0) "已删除" else "已更新"
+                    val isUndoDelete = food.count == 0
+                    Snackbar.make(
+                            mContext.findViewById(R.id.activity_main) as ConstraintLayout,
+                            text, Snackbar.LENGTH_LONG)
+                            .setAction("撤销", UndoListener(mContext, this@RecyclerViewAdapter, undoFood, position, isUndoDelete))
+                            .show()
+                }
+            }
+
+            override fun onFailure() {
+                (mContext as Activity).runOnUiThread {
+                    Snackbar.make(
+                            mContext.findViewById(R.id.activity_main) as ConstraintLayout,
+                            "更新失败", Snackbar.LENGTH_LONG)
+                            .show()
+                }
+            }
+        }
     }
 }

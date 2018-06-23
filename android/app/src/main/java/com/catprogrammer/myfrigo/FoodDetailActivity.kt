@@ -41,12 +41,12 @@ class FoodDetailActivity : Activity() {
         // show date picker on click
         val productionOnDateSetListener: DatePickerDialog.OnDateSetListener =
                 DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                    food.productionDate = LocalDate.of(year, monthOfYear, dayOfMonth)
+                    food.productionDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
                     fooddetail_production_edittext.setText(food.productionDateString())
                 }
         val expirationOnDateSetListener: DatePickerDialog.OnDateSetListener =
                 DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-                    food.expirationDate = LocalDate.of(year, monthOfYear, dayOfMonth)
+                    food.expirationDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth)
                     fooddetail_expiration_edittext.setText(food.expirationDateString())
                 }
         val productionDatePickerDialog = getDatePickerDialog(food.productionDate, productionOnDateSetListener)
@@ -138,11 +138,11 @@ class FoodDetailActivity : Activity() {
         val day: Int
         if (date != null) {
             year = date.year
-            month = date.monthValue
+            month = date.monthValue - 1
             day = date.dayOfMonth
         } else {
             year = today.year
-            month = today.monthValue
+            month = today.monthValue - 1
             day = today.dayOfMonth
         }
         return DatePickerDialog(this, onDateSetListener, year, month, day)

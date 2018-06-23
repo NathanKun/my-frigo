@@ -10,13 +10,14 @@ android {
         applicationId "com.catprogrammer.myfrigo"
         minSdkVersion 27
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -65,9 +66,8 @@ dependencies {
     // recyclerview animator
     implementation 'jp.wasabeef:recyclerview-animators:2.3.0'
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    // fab
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

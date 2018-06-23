@@ -1,27 +1,27 @@
 <resources>
-    <string name="app_name">MyFrigo</string>
+    <string name="app_name">冰箱里有啥</string>
 
     <string name="placeholder_yyyy_mm_dd">yyyy-MM-dd</string>
     <string name="placeholder_foodname">Food_Name</string>
-    <string name="placeholder_foodnote">note note note note note note note note note note note note</string>
+    <string name="placeholder_foodnote">NoteNoteNoteNote NoteNoteNote NoteNote Note NoteNote NoteNoteNote NoteNoteNoteNote</string>
 
     <string name="img_desc_foodphoto">food photo</string>
     <string name="img_desc_swipe_delete">swipe delete button</string>
     <string name="img_desc_blur_frigo_background">blur frigo background</string>
     <string name="img_desc_capture">capture</string>
-
-    <string name="name">Name</string>
-    <string name="note">Note</string>
-    <string name="expiration">Expiration</string>
-    <string name="production">Production</string>
-    <string name="upload">Upload</string>
     <string name="img_desc_food_activity_image">food activity image</string>
+
+    <string name="name">名字</string>
+    <string name="note">备注</string>
+    <string name="expiration">保质期</string>
+    <string name="production">生产日期</string>
+    <string name="upload">上传日期</string>
     <string name="btn_save">Save</string>
-    <string name="switch_percentage_or_number">% or nb</string>
     <string name="switch_counttype_percentage">百分比计算</string>
     <string name="switch_counttype_number">数量计算</string>
-    <string name="btn_new_photo">New</string>
-    <string name="btn_sort_expiration">Exp</string>
-    <string name="btn_sort_production">prd</string>
-    <string name="btn_sort_upload">upload</string>
+
+    <string name="btn_new_photo">拍照</string>
+    <string name="btn_sort_expiration">保质期排序</string>
+    <string name="btn_sort_production">生产日期排序</string>
+    <string name="btn_sort_upload">上传日期排序</string>
 </resources>
