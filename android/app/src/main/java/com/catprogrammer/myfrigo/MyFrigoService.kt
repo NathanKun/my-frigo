@@ -1,6 +1,7 @@
 package com.catprogrammer.myfrigo
 
 import android.app.AlarmManager
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -11,7 +12,10 @@ import java.util.*
 
 class MyFrigoService : Service() {
 
-
+    override fun onCreate() {
+        super.onCreate()
+        startForeground(0, Notification())
+    }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         registerAlarm()
@@ -32,8 +36,8 @@ class MyFrigoService : Service() {
         // Set the alarm to start at 18:00 every day
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
-        calendar.set(Calendar.HOUR_OF_DAY, 16)
-        calendar.set(Calendar.MINUTE, 50)
+        calendar.set(Calendar.HOUR_OF_DAY, 17)
+        calendar.set(Calendar.MINUTE, 15)
 
         val alarmMgr = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         // With setInexactRepeating(), you have to use one of the AlarmManager interval

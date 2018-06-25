@@ -24,6 +24,8 @@ import com.daimajia.swipe.SimpleSwipeListener
 import com.daimajia.swipe.SwipeLayout
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.google.gson.JsonObject
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 
 class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Food>, private val handler: Handler)
@@ -166,6 +168,18 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
             food.push(getUpdateFoodCallback(viewHolder.adapterPosition, undoFood))
             closeItem(viewHolder.adapterPosition)
         }
+
+        // set text color base on expiration date
+        viewHolder.foodlistNameTextview.setTextColor(when {
+            food.expirationDate?.isEqual(LocalDate.now()) == true -> // expire today
+                mContext.getColor(R.color.expirationYellow)
+            food.expirationDate?.isBefore(LocalDate.now()) == true -> // expired
+                mContext.getColor(R.color.expirationRed)
+            (ChronoUnit.DAYS.between(food.productionDate, food.expirationDate) / 10) >
+                    (ChronoUnit.DAYS.between(LocalDate.now(), food.expirationDate)) -> // 90% days passed
+                mContext.getColor(R.color.expirationYellow)
+            else -> mContext.getColor(android.R.color.primary_text_light)
+        })
 
         mItemManger.bindView(viewHolder.itemView, position)
     }

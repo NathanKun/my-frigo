@@ -84,6 +84,7 @@ class MainActivity : Activity() {
                             SortDirection.ASC, SortBy.EXP, SortDirection.ASC))
             mAdapter.notifySort()
         }
+
     }
 
     override fun onResume() {
