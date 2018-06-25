@@ -1,11 +1,14 @@
 package com.catprogrammer.myfrigo
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.widget.Toast
 import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
@@ -34,6 +37,11 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // start notification service
+        if (!isServiceRunning()) {
+            startService(Intent(this, MyFrigoService::class.java))
+        }
 
         // add swipe down refresh listener, call getData() when swipe down
         foodlist_swiperefresh.setOnRefreshListener { getData() }
@@ -176,6 +184,19 @@ class MainActivity : Activity() {
 
     private enum class SortBy {
         PRD, EXP, UPL
+    }
+
+
+    private fun isServiceRunning(): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        // getRunningServices is deprecated but will still return the caller's own services.
+        for (service in manager!!.getRunningServices(Integer.MAX_VALUE)) {
+            if (MyFrigoService::class.java.name == service.service.className) {
+                Log.d("servicecheck", service.service.className)
+                return true
+            }
+        }
+        return false
     }
 }
 
