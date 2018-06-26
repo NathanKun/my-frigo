@@ -1,3 +1,5 @@
 android/app/src/main/java/com/catprogrammer/myfrigo/util/Const.kt
 android/app/google-services.json
 android/playstore/key.jks
+android/app/release/output.json
+android/app/release/app-release.apk
