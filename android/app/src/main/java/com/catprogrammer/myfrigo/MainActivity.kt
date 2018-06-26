@@ -31,6 +31,7 @@ class MainActivity : Activity() {
         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             mAdapter.closeAllItems()
+            collapseFab()
         }
     }
 
@@ -44,7 +45,11 @@ class MainActivity : Activity() {
         }
 
         // add swipe down refresh listener, call getData() when swipe down
-        foodlist_swiperefresh.setOnRefreshListener { getData() }
+        foodlist_swiperefresh.setOnRefreshListener {
+            mAdapter.closeAllItems()
+            collapseFab()
+            getData()
+        }
 
         // add adapter to listview, link dataToShow to adapter
         mAdapter = RecyclerViewAdapter(this, foods, Handler())
@@ -90,6 +95,27 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         getData()
+    }
+
+    private var backPressedOnceTime = 0L
+    override fun onBackPressed() {
+        when {
+            // food swipe layout opened
+            mAdapter.openingPosition != -1 -> mAdapter.closeAllItems()
+            // fab expanded
+            main_fab.isExpanded -> main_fab.collapse()
+            // back pressed twice in 2s
+            backPressedOnceTime + 2000 > System.currentTimeMillis() -> super.onBackPressed()
+            // back pressed once
+            else -> {
+                backPressedOnceTime = System.currentTimeMillis()
+                Toast.makeText(this, "再按一次返回键来退出APP", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun collapseFab() {
+        if (main_fab.isExpanded) main_fab.collapse()
     }
 
     /**

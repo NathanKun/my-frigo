@@ -16,6 +16,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.catprogrammer.myfrigo.FoodDetailActivity
+import com.catprogrammer.myfrigo.MainActivity
 import com.catprogrammer.myfrigo.R
 import com.catprogrammer.myfrigo.model.CountType
 import com.catprogrammer.myfrigo.model.Food
@@ -26,6 +27,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter
 import com.google.gson.JsonObject
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.math.ceil
 
 
 class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Food>, private val handler: Handler)
@@ -57,23 +59,24 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
 
     /* class RecyclerViewAdapter */
 
-    private var openingPosition: Int = -1
+    var openingPosition: Int = -1
 
     override fun openItem(position: Int) {
         super.openItem(position)
         openingPosition = position
+        (mContext as MainActivity).collapseFab()
     }
 
     override fun closeItem(position: Int) {
         super.closeItem(position)
         // prevent closing swift layout trigger click event
-        handler.postDelayed({ openingPosition = -1 }, 100)
+        handler.postDelayed({ openingPosition = -1 }, 300)
     }
 
     override fun closeAllItems() {
         super.closeAllItems()
         // prevent closing swift layout trigger click event
-        handler.postDelayed({ openingPosition = -1 }, 100)
+        handler.postDelayed({ openingPosition = -1 }, 300)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder {
@@ -87,6 +90,7 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
                     val food = foods[position]
                     val intent = Intent(mContext, FoodDetailActivity::class.java)
                     intent.putExtra("food", food)
+                    (mContext as MainActivity).collapseFab()
                     mContext.startActivity(intent)
                 } // else ignore event
             }
@@ -100,7 +104,7 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
             override fun onOpen(layout: SwipeLayout?) {
                 super.onOpen(layout)
                 // closeAllExcept(layout) not working ?
-                closeItem(openingPosition)
+                //closeItem(openingPosition)
                 handler.postDelayed({ openingPosition = viewHolder.adapterPosition }, 200)
             }
 
@@ -111,7 +115,7 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
         })
 
         // text
-        viewHolder.foodlistNameTextview.text = food.name
+        viewHolder.foodlistNameTextview.text = concatFoodNameAndCount(food)
         viewHolder.foodlistNoteTextview.text = food.note
         viewHolder.foodlistUploadDateTextview.text = food.uploadDateString()
         viewHolder.foodlistProductionDateTextview.text = food.productionDateString()
@@ -126,7 +130,7 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
         if (food.countType == CountType.COUNT_TYPE_PERCENTAGE) {
             seekBar.max = 100
         } else {
-            seekBar.max = food.count
+            seekBar.max = ceil(food.count * 1.5).toInt()
         }
         seekBar.progress = food.count
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -175,8 +179,12 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
                 mContext.getColor(R.color.expirationYellow)
             food.expirationDate?.isBefore(LocalDate.now()) == true -> // expired
                 mContext.getColor(R.color.expirationRed)
-            (ChronoUnit.DAYS.between(food.productionDate, food.expirationDate) / 10) >
-                    (ChronoUnit.DAYS.between(LocalDate.now(), food.expirationDate)) -> // 90% days passed
+            (food.productionDate != null && food.expirationDate != null &&
+                    ((ChronoUnit.DAYS.between(food.productionDate, food.expirationDate) / 10) >
+                            (ChronoUnit.DAYS.between(LocalDate.now(), food.expirationDate)) ||
+                            (ChronoUnit.DAYS.between(food.createdAt!!.toLocalDate(), food.expirationDate) / 10) >
+                            (ChronoUnit.DAYS.between(LocalDate.now(), food.expirationDate)))
+                    ) -> // 90% days passed
                 mContext.getColor(R.color.expirationYellow)
             else -> mContext.getColor(android.R.color.primary_text_light)
         })
@@ -230,6 +238,14 @@ class RecyclerViewAdapter(private val mContext: Context, var foods: ArrayList<Fo
                             .show()
                 }
             }
+        }
+    }
+
+    private fun concatFoodNameAndCount(food: Food): String {
+        return if(food.countType == CountType.COUNT_TYPE_NUMBER) {
+            "${food.name} x${food.count}"
+        } else {
+            "${food.name} (${food.count}%)"
         }
     }
 }
