@@ -7,7 +7,8 @@ import android.content.Intent
 class AutoStartReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == "android.intent.action.BOOT_COMPLETED") {
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED
+                || intent.action == "RestartService") {
             context.startForegroundService(Intent(context, MyFrigoService::class.java))
         }
     }

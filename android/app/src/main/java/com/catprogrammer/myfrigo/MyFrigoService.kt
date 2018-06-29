@@ -12,12 +12,9 @@ import java.util.*
 
 class MyFrigoService : Service() {
 
-    override fun onCreate() {
-        super.onCreate()
-        startForeground(0, Notification())
-    }
-
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        startForeground(0, Notification())
+
         // register channel
         ExpirationNotificationService.createNotificationChannel(this)
         ExpirationNotificationService.startActionNotification(this)
@@ -31,6 +28,13 @@ class MyFrigoService : Service() {
 
     override fun onBind(intent: Intent): IBinder {
         throw NotImplementedError()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val intent = Intent(this, AutoStartReceiver::class.java)
+        intent.action = "RestartService"
+        sendBroadcast(intent)
     }
 
     private fun registerAlarm(hour: Int, minute: Int) {

@@ -43,6 +43,7 @@
         <activity android:name=".MenuActivity" />
         <activity android:name=".FoodDetailActivity" />
 
+
         <service
             android:name=".ExpirationNotificationService"
             android:enabled="true"
@@ -52,7 +53,12 @@
             android:name=".MyFrigoService"
             android:enabled="true"
             android:exported="false"
-            android:process=":notification" />
+            android:process=":notification">
+            <intent-filter>
+                <action android:name="com.catprogrammer.myfrigo.MyFrigoService" />
+            </intent-filter>
+        </service>
+
 
         <receiver
             android:name=".AutoStartReceiver"
