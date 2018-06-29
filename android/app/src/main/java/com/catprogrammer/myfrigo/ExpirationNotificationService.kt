@@ -1,19 +1,25 @@
 package com.catprogrammer.myfrigo
 
 import android.app.*
+import android.app.job.JobInfo
+import android.app.job.JobParameters
+import android.app.job.JobScheduler
+import android.app.job.JobService
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.PersistableBundle
 import android.support.v4.app.NotificationCompat
-import android.util.Log
 import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.catprogrammer.myfrigo.util.HttpUtil
 import com.google.gson.JsonObject
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
-private const val ACTION_NOTIFICATION = "com.catprogrammer.myfrigo.action.ACTION_NOTIFICATION"
-private const val NOTIFICATION_ID_EXPIRATION = 233
+private const val NOTIFICATION_ID = 233
 private const val CHANNEL_ID = "com.catprogrammer.myfrigo.notification.chanel.expiration"
 
 
@@ -21,30 +27,18 @@ private const val CHANNEL_ID = "com.catprogrammer.myfrigo.notification.chanel.ex
  * An [IntentService] subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  */
-class ExpirationNotificationService : IntentService("ExpirationNotificationService") {
+class ExpirationNotificationService : JobService() {
 
-    override fun onCreate() {
-        super.onCreate()
-
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("")
-                .setContentText("").build()
-
-        startForeground(1, notification)
+    override fun onStopJob(p0: JobParameters?): Boolean {
+        // true to indicate to the JobManager whether you'd like to reschedule this job
+        // based on the retry criteria provided at job creation-time;
+        // or false to end the job entirely.
+        // Regardless of the value returned, your job must stop executing.
+        return false
     }
 
-    override fun onHandleIntent(intent: Intent?) {
-        when (intent?.action) {
-            ACTION_NOTIFICATION -> {
-                handleActionNotification()
-            }
-        }
-    }
+    override fun onStartJob(p0: JobParameters?): Boolean {
 
-    /**
-     * Handle action Notification in the provided background thread
-     */
-    private fun handleActionNotification() {
 
         val cb: GeneralCallback = object : GeneralCallback() {
             override fun onSuccess(data: JsonObject) {
@@ -64,16 +58,35 @@ class ExpirationNotificationService : IntentService("ExpirationNotificationServi
                 if (foods.size > 0) {
                     sendNotification(foods)
                 }
+
+                // schedule job for tomorrow
+                if(p0 != null) {
+                    val bundle = p0.extras
+                    val scheduler = this@ExpirationNotificationService.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+                    val jobService = ComponentName(this@ExpirationNotificationService, ExpirationNotificationService::class.java)
+
+                    ExpirationNotificationService.scheduleNextJob(
+                            bundle.getInt("hour"), bundle.getInt("minute"), scheduler, jobService)
+                }
+
+                // true if this job should be rescheduled according to the
+                // back-off criteria specified when it was first scheduled;
+                // false otherwise.
+                jobFinished(p0, false)
             }
 
             override fun onFailure() {
-
+                jobFinished(p0, true)
             }
-        }// val cb end
+        }
 
         HttpUtil.getInstance().getAllFoods(cb)
 
+        //	true if your service will continue running, using a separate thread when appropriate.
+        // false means that this job has completed its work.
+        return true
     }
+
 
     private fun sendNotification(foods: List<Food>) {
         var contentText: String?
@@ -84,7 +97,7 @@ class ExpirationNotificationService : IntentService("ExpirationNotificationServi
             }
         }
 
-        contentText = when(names.size) {
+        contentText = when (names.size) {
             0 -> null
             1 -> names[0]
             2 -> names[0] + "和" + names[1]
@@ -98,7 +111,7 @@ class ExpirationNotificationService : IntentService("ExpirationNotificationServi
             }
         }
 
-        if(names.size != foods.size && names.size != 0) {
+        if (names.size != foods.size && names.size != 0) {
             contentText += "..."
         }
 
@@ -106,7 +119,7 @@ class ExpirationNotificationService : IntentService("ExpirationNotificationServi
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("${foods.size}个食物要过期啦")
 
-        if(contentText != null) mBuilder.setContentText(contentText)
+        if (contentText != null) mBuilder.setContentText(contentText)
 
         // Creates an explicit intent for an Activity in your app
         val resultIntent = Intent(this, MainActivity::class.java)
@@ -126,25 +139,11 @@ class ExpirationNotificationService : IntentService("ExpirationNotificationServi
 
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // Id allows you to update the notification later on.
-        mNotificationManager.notify(NOTIFICATION_ID_EXPIRATION, mBuilder.build())
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build())
     }
 
 
-
     companion object {
-        /**
-         * Starts this service to perform action Noficifation
-         * If the service is already performing a task this action will be queued.
-         *
-         * @see IntentService
-         */
-        @JvmStatic
-        fun startActionNotification(context: Context) {
-            val intent = Intent(context, ExpirationNotificationService::class.java).apply {
-                action = ACTION_NOTIFICATION
-            }
-            context.startForegroundService(intent)
-        }
 
         @JvmStatic
         fun createNotificationChannel(ctx: Context) {
@@ -157,6 +156,52 @@ class ExpirationNotificationService : IntentService("ExpirationNotificationServi
             // or other notification behaviors after this
             val notificationManager = ctx.getSystemService(NotificationManager::class.java)
             notificationManager!!.createNotificationChannel(channel)
+        }
+
+        @JvmStatic
+        fun scheduleJobs(ctx: Context) {
+            val scheduler = ctx.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            val jobService = ComponentName(ctx, ExpirationNotificationService::class.java)
+
+            scheduler.cancelAll()
+            scheduleNextJob(8, 0, scheduler, jobService)
+            scheduleNextJob(17, 30, scheduler, jobService)
+            scheduleNextJob(22, 0, scheduler, jobService)
+        }
+
+        @JvmStatic
+        private fun scheduleNextJob(hour: Int, minute: Int, scheduler: JobScheduler, jobService: ComponentName) {
+            val now = LocalDateTime.now()
+
+            var target = now.withHour(hour).withMinute(minute)
+            if (target.isBefore(now)) {
+                target = target.plusDays(1)
+            }
+
+
+            // the unique id by alarm time
+            val hourStr = if (hour.toString().length == 2) hour.toString() else "0" + hour.toString()
+            val minuteStr = if (minute.toString().length == 2) minute.toString() else "0" + minute.toString()
+            val jobId = ("$NOTIFICATION_ID$hourStr$minuteStr").toInt()
+
+            // millisecond until next time
+            val milis = target.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - System.currentTimeMillis()
+
+            // bundle to pass to the job, contains hour and minute to schedule the next job
+            val bundle = PersistableBundle()
+            bundle.putInt("hour", hour)
+            bundle.putInt("minute", minute)
+
+            // build the job
+            val jobInfo = JobInfo.Builder(jobId, jobService)
+                    .setMinimumLatency(milis)
+                    .setPersisted(true)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setExtras(bundle)
+                    .build()
+
+            // schedule the job
+            scheduler.schedule(jobInfo)
         }
     }
 }

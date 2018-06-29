@@ -1,14 +1,11 @@
 package com.catprogrammer.myfrigo
 
 import android.app.Activity
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.Toast
 import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
@@ -38,6 +35,10 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // create notification channel
+        ExpirationNotificationService.createNotificationChannel(this)
+        ExpirationNotificationService.scheduleJobs(this)
 
         // add swipe down refresh listener, call getData() when swipe down
         foodlist_swiperefresh.setOnRefreshListener {
