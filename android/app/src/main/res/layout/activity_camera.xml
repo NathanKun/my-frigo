@@ -28,11 +28,24 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/img_desc_capture"
-        android:src="@drawable/googleg_standard_color_18"
+        android:background="@color/transparent"
+        android:src="@drawable/baseline_camera_black_48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/camera_view"
         app:layout_constraintVertical_bias="0.95" />
+
+    <ImageView
+        android:id="@+id/camera_white_screen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@color/white"
+        android:visibility="gone"
+        android:contentDescription="@string/img_desc_take_photo_effect" />
 
 </android.support.constraint.ConstraintLayout>

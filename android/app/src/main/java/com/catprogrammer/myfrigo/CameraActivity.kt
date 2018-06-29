@@ -9,6 +9,7 @@ import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.support.media.ExifInterface
 import android.util.Log
 import android.view.View
@@ -68,6 +69,9 @@ class CameraActivity : Activity() {
     }
 
     private fun takePicture() {
+        // create a white screen flash effect to notice photo was taken
+        camera_white_screen.visibility = View.VISIBLE
+        (Handler()).postDelayed({ camera_white_screen.visibility = View.GONE }, 200)
 
         // callback for http request
         val httpCallback: GeneralCallback = object : GeneralCallback() {

@@ -10,6 +10,7 @@
     <string name="img_desc_blur_frigo_background">blur frigo background</string>
     <string name="img_desc_capture">capture</string>
     <string name="img_desc_food_activity_image">food activity image</string>
+    <string name="img_desc_take_photo_effect">take photo effect</string>
 
     <string name="name">名字</string>
     <string name="note">备注</string>

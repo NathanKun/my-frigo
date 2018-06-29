@@ -174,12 +174,12 @@ class MainActivity : Activity() {
                 }
                 SortBy.EXP -> when (sd) {
                     SortDirection.ASC ->
-                        comparator?.thenBy(nullsLast(), Food::expirationDate)
-                                ?: compareBy(nullsLast(), Food::expirationDate)
+                        comparator?.thenBy(nullsFirst(), Food::expirationDate)
+                                ?: compareBy(nullsFirst(), Food::expirationDate)
 
                     SortDirection.DESC ->
-                        comparator?.thenByDescending(nullsLast(), Food::expirationDate)
-                                ?: compareByDescending(nullsLast(), Food::expirationDate)
+                        comparator?.thenByDescending(nullsFirst(), Food::expirationDate)
+                                ?: compareByDescending(nullsFirst(), Food::expirationDate)
                 }
                 SortBy.UPL -> when (sd) {
                     SortDirection.ASC ->
