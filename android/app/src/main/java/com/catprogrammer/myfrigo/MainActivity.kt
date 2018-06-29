@@ -39,11 +39,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // start notification service
-        if (!isServiceRunning()) {
-            startService(Intent(this, MyFrigoService::class.java))
-        }
-
         // add swipe down refresh listener, call getData() when swipe down
         foodlist_swiperefresh.setOnRefreshListener {
             mAdapter.closeAllItems()
@@ -213,18 +208,6 @@ class MainActivity : Activity() {
         PRD, EXP, UPL
     }
 
-
-    private fun isServiceRunning(): Boolean {
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-        // getRunningServices is deprecated but will still return the caller's own services.
-        for (service in manager!!.getRunningServices(Integer.MAX_VALUE)) {
-            if (MyFrigoService::class.java.name == service.service.className) {
-                Log.d("servicecheck", service.service.className)
-                return true
-            }
-        }
-        return false
-    }
 }
 
 

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -49,26 +48,6 @@
             android:enabled="true"
             android:exported="false" />
 
-        <service
-            android:name=".MyFrigoService"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":notification">
-            <intent-filter>
-                <action android:name="com.catprogrammer.myfrigo.MyFrigoService" />
-            </intent-filter>
-        </service>
-
-
-        <receiver
-            android:name=".AutoStartReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
 
         <receiver
             android:name=".ExpirationNotificationServiceReceiver"
