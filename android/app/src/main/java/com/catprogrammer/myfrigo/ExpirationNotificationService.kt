@@ -173,11 +173,10 @@ class ExpirationNotificationService : JobService() {
         private fun scheduleNextJob(hour: Int, minute: Int, scheduler: JobScheduler, jobService: ComponentName) {
             val now = LocalDateTime.now()
 
-            var target = now.withHour(hour).withMinute(minute)
+            var target = now.withHour(hour).withMinute(minute).withSecond(0)
             if (target.isBefore(now)) {
                 target = target.plusDays(1)
             }
-
 
             // the unique id by alarm time
             val hourStr = if (hour.toString().length == 2) hour.toString() else "0" + hour.toString()
