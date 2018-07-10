@@ -11,10 +11,12 @@ import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.catprogrammer.myfrigo.util.HttpUtil
 import com.catprogrammer.myfrigo.util.RecyclerViewAdapter
+import com.catprogrammer.myfrigo.util.SharedPreferencesUtil
 import com.daimajia.swipe.util.Attributes
 import com.google.gson.JsonObject
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.concurrent.thread
 
 
 class MainActivity : Activity() {
@@ -23,7 +25,7 @@ class MainActivity : Activity() {
     private lateinit var mAdapter: RecyclerViewAdapter
 
 
-    var onScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
+    private var onScrollListener: RecyclerView.OnScrollListener = object : RecyclerView.OnScrollListener() {
 
         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -90,7 +92,16 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        foods.clear()
+        foods.addAll(SharedPreferencesUtil.readFoods(this@MainActivity))
         getData()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        thread(start = true) {
+            SharedPreferencesUtil.writeFoods(this@MainActivity, foods)
+        }
     }
 
     private var backPressedOnceTime = 0L

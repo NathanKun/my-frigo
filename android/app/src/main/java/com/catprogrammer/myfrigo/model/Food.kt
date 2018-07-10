@@ -27,21 +27,21 @@ class Food() : Crudable, Parcelable {
     var note: String = ""
     var barcode: String? = null
     var historyId: Int? = null
-    var photoBitmap: Bitmap? = null
-    var photoBitmapPath: String? = null
-    var photoBitmapCompressed: Bitmap? = null
+    @Transient var photoBitmap: Bitmap? = null
+    @Transient var photoBitmapPath: String? = null
+    @Transient var photoBitmapCompressed: Bitmap? = null
     var photoUrlSmall: String? = null
     var photoUrlLarge: String? = null
     var photoUrlOriginal: String? = null
 
-    var isBarcodeDetected: Boolean = false
-    var isOcr1Detected: Boolean = false
-    var isOcr2Detected: Boolean = false
-    var isOcr3Detected: Boolean = false
+    @Transient var isBarcodeDetected: Boolean = false
+    @Transient var isOcr1Detected: Boolean = false
+    @Transient var isOcr2Detected: Boolean = false
+    @Transient var isOcr3Detected: Boolean = false
 
-    private val httpUtil = HttpUtil.getInstance()
+    @Transient private val httpUtil = HttpUtil.getInstance()
 
-    private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    @Transient private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readInt()
