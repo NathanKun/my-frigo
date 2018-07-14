@@ -22,6 +22,7 @@ import com.catprogrammer.myfrigo.util.PermissionsDelegate
 import com.google.gson.JsonObject
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
+import io.fotoapparat.configuration.UpdateConfiguration
 import io.fotoapparat.log.logcat
 import io.fotoapparat.selector.*
 import kotlinx.android.synthetic.main.activity_camera.*
@@ -58,6 +59,7 @@ class CameraActivity : Activity() {
         fotoapparat = Fotoapparat(
                 context = this,
                 view = camera_view,
+                focusView = focus_view,
                 logger = logcat(),
                 lensPosition = activeCamera.lensPosition,
                 cameraConfiguration = activeCamera.configuration,
@@ -109,6 +111,15 @@ class CameraActivity : Activity() {
         val ocrUtil = OcrUtil()
 
         photoResult.saveToFile(File(path)).whenAvailable {
+            fotoapparat.updateConfiguration(
+                    UpdateConfiguration(
+                            focusMode = firstAvailable(
+                                    continuousFocusPicture(),
+                                    autoFocus()
+                            )
+                    )
+            )
+
             thread(start = true) {
 
                 // rotate

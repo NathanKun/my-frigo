@@ -17,7 +17,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--Optionally add tap to focus-->
+        <io.fotoapparat.view.FocusView
+            android:id="@+id/focus_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </io.fotoapparat.view.CameraView>
 
     <ImageButton
         android:id="@+id/cam_btn_capture"
@@ -27,8 +35,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:contentDescription="@string/img_desc_capture"
         android:background="@color/transparent"
+        android:contentDescription="@string/img_desc_capture"
         android:src="@drawable/baseline_camera_black_48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,12 +48,12 @@
         android:id="@+id/camera_white_screen"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/img_desc_take_photo_effect"
+        android:src="@color/white"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@color/white"
-        android:visibility="gone"
-        android:contentDescription="@string/img_desc_take_photo_effect" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
