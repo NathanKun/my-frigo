@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat
 import com.catprogrammer.myfrigo.model.Food
 import com.catprogrammer.myfrigo.model.GeneralCallback
 import com.catprogrammer.myfrigo.util.HttpUtil
+import com.catprogrammer.myfrigo.util.SharedPreferencesUtil
 import com.google.gson.JsonObject
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -56,7 +57,10 @@ class ExpirationNotificationService : JobService() {
 
                 foods.sortWith(compareBy(Food::expirationDate))
                 if (foods.size > 0) {
+                    // send notification
                     sendNotification(foods)
+                    // save food list to shared preference
+                    SharedPreferencesUtil.writeFoods(this@ExpirationNotificationService, foods)
                 }
 
                 // schedule job for tomorrow
